@@ -32,28 +32,34 @@ architecture behavioral of UART_RX is
     signal mid_bit : std_logic := '0';                   -- signal if the process is mid-bit
     signal exp_end : std_logic := '0';                  -- signal if fsm should expect an end bit
     signal data_count : integer range 0 to 7 := 0;      -- counter of bits read
+    signal data_reg : std_logic_vector(7 downto 0);     -- register for read data
+    signal valid : std_logic := '1';
 
 begin
 
     -- Instance of RX FSM
     fsm: entity work.UART_RX_FSM
     port map (
+        -- inputs
         CLK => CLK,
         RST => RST,
         DIN => DIN,
         mid_bit => MID_BIT,
         exp_end => EXP_END,
 
+        -- outputs
         COUNT_CE => count_ce,
         READ_DATA => read_data,
         SEND_DATA => send_data,
-        VALID => DOUT_VLD
+        VALID => valid
     );
 
     process (CLK) begin
 
         if RST = '1' then
             DOUT <= (others => '0');
+            DOUT_VLD <= '0';
+            data_reg <= (others => '0');
             clock_count <= 0;
             mid_bit <= '0';
             exp_end <= '0';
@@ -61,7 +67,8 @@ begin
 
         elsif rising_edge(CLK) then
 		
-	    mid_bit <= '0';
+	        mid_bit <= '0';     -- reset mid_bit
+
             -- check if counting is on
             if count_CE = '0' then          -- if not counting clocks
                 clock_count <= 0;           -- reset clock
@@ -86,36 +93,41 @@ begin
                 -- save bit to its position
                 case data_count is
                     when 0 =>
-                        DOUT(0) <= DIN;
+                        data_reg(0) <= DIN;
 			            data_count <= data_count + 1;   -- data count++
                     when 1 =>
-                        DOUT(1) <= DIN;
+                        data_reg(1) <= DIN;
 			            data_count <= data_count + 1;   -- data count++
                     when 2 =>
-                        DOUT(2) <= DIN;
+                        data_reg(2) <= DIN;
 			            data_count <= data_count + 1;   -- data count++
                     when 3 =>
-                        DOUT(3) <= DIN;
+                        data_reg(3) <= DIN;
 			            data_count <= data_count + 1;   -- data count++
                     when 4 =>
-                        DOUT(4) <= DIN;
+                        data_reg(4) <= DIN;
 			            data_count <= data_count + 1;   -- data count++
                     when 5 =>
-                        DOUT(5) <= DIN;
+                        data_reg(5) <= DIN;
 			            data_count <= data_count + 1;   -- data count++
                     when 6 =>
-                        DOUT(6) <= DIN;
+                        data_reg(6) <= DIN;
 	                    data_count <= data_count + 1;   -- data count++
 
                     when 7 =>
-                        DOUT(7) <= DIN;
-			            exp_end <= '1';
-			            data_count <= 0;
+                        data_reg(7) <= DIN;
+			            exp_end <= '1';     -- expect end after last bit
+			            data_count <= 0;    -- reset the counter
                 end case;
             end if;
 
             if send_data = '1' then
-                exp_end <= '0';
+                DOUT <= data_reg;   -- send loaded data
+                DOUT_VLD <= valid;  -- set DOUT_VLD to validation bit
+                exp_end <= '0';     -- do not expect end anymore
+            else
+                DOUT <= (others => '0');    -- to keep things clean, send 0s when data is not ready
+                DOUT_VLD <= '0';            -- DOUT cannot be valid in this case
             end if;
         end if;
 
