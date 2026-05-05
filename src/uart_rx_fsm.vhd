@@ -79,6 +79,4 @@ begin
             end case;
         end if;
     end process;
-end;
-
 end architecture;
