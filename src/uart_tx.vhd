@@ -1,5 +1,5 @@
 -- uart_tx.vhd: UART controller - transmitting (TX) side
--- Author(s): Name Surname (xlogin00)
+-- Author(s): Antonin Hrncir (xhrncia00)
 
 library ieee;
 use ieee.std_logic_1164.all;
