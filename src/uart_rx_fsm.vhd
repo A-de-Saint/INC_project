@@ -7,7 +7,7 @@ use ieee.std_logic_unsigned.all;
 
 
 
-entity UART_TX_FSM is
+entity UART_RX_FSM is
     port(
        CLK : in std_logic;          -- clock
        RST : in std_logic;          -- reset
@@ -24,7 +24,7 @@ end entity;
 
 
 
-architecture behavioral of UART_TX_FSM is
+architecture behavioral of UART_RX_FSM is
     -- states of my fsm
     type fsm_states is (idle, start_prep, read_rdy, read_bit, send_valid, send_invalid);
 

@@ -3,9 +3,9 @@
 
 gtkwave::/Edit/Insert_Comment "Main Interface"
 gtkwave::addSignalsFromList [list clk rst]
-gtkwave::addSignalsFromList [list din din_vld din_rdy dout]
-gtkwave::addSignalsFromList [list dout_state]
+gtkwave::addSignalsFromList [list din_state]
 gtkwave::/Edit/Color_Format/Blue
+gtkwave::addSignalsFromList [list din dout dout_vld]
 gtkwave::/Edit/Insert_Blank
 
 gtkwave::/Edit/Insert_Comment "Other Signals"

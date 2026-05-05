@@ -1,4 +1,4 @@
-# uart.sh: Bash script for GHDL+GTKWave synth and simulation of UART TX
+# uart.sh: Bash script for GHDL+GTKWave synth and simulation of UART RX
 # Author(s): Lukas Kekely (ikekely@fit.vutbr.cz)
 
 GHDL="ghdl"
@@ -15,7 +15,7 @@ fi
 
 # Analyze sources and defined entities
 echo  "########## ANALYSIS ##########"
-for src in uart_tx_fsm.vhd uart_tx.vhd testbench.vhd; do
+for src in uart_rx_fsm.vhd uart_rx.vhd testbench.vhd; do
     $GHDL -a $GHDLFLAGS $src
     if [ $? -ne 0 ]; then
         echo "Analysis of $src ended with error!"
@@ -26,7 +26,7 @@ echo
 
 # Synthesize UART module
 echo "########## SYNTHESIS ##########"
-$GHDL synth $GHDLFLAGS uart_tx >$SYNTH_FILE
+$GHDL synth $GHDLFLAGS uart_rx >$SYNTH_FILE
 if [ $? -ne 0 ]; then
     echo "Synthesis ended with error!"
     exit 1
